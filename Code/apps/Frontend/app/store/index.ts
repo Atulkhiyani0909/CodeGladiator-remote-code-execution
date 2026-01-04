@@ -4,7 +4,7 @@ import axios from 'axios';
 
 const useAuth = create((set) => ({
     user: null,
-    isLoading: false,
+    isLoading: true,
     error: null,
 
     getUserData: async () => {

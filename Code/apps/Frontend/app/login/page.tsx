@@ -12,15 +12,32 @@ import {
   Cpu 
 } from 'lucide-react';
 import { logIn } from '../services/service';
+import { useRouter } from 'next/navigation';
 
 const Page = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [isLoading,setisLoading]=useState(false);
+
+  const router = useRouter();
 
   async function handleLogin() {
-    console.log(email , password);
+    setisLoading(true);
 
-    await logIn(email,password);
+    const res = await logIn(email,password);
+
+    if(res.status==200){
+        router.push('/home');
+    }
+  }
+
+
+   if (isLoading) {
+    return (
+      <div className="min-h-screen bg-[#050505] flex items-center justify-center text-orange-500 font-mono animate-pulse">
+       Wait Logging you In
+      </div>
+    );
   }
 
   return (

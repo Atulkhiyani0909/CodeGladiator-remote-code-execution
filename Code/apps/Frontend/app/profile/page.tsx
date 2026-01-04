@@ -4,15 +4,15 @@ import React, { useEffect } from 'react';
 import useAuth from '../store';
 
 const UserProfile = () => {
-  // 1. Destructure the state and the function from the store
+
   const { user, isLoading, error, getUserData } : any = useAuth();
 
-  // 2. Use useEffect to call the function when the component mounts
+ 
   useEffect(() => {
     getUserData();
-  }, [getUserData]); // Dependency ensures no stale closures
+  }, [getUserData]); 
 
-  // 3. Handle the UI states
+ 
   if (isLoading) {
     return <div>Loading user data...</div>;
   }
@@ -25,9 +25,10 @@ const UserProfile = () => {
     return <div>No user logged in</div>;
   }
 
-  // 4. Render the user data
+  
   return (
-    <div className="p-4 border rounded shadow">
+    <div className="mt-12 p-4 border rounded shadow">
+      <br /><br /><br /><br /><br /><br /><br /><br />
       <h1>Welcome, {JSON.stringify(user)}</h1>
     </div>
   );

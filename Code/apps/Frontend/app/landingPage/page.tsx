@@ -2,9 +2,9 @@
 
 import React from 'react';
 import { Code, Cpu, Terminal, User, Award, Play, ChevronRight } from 'lucide-react';
-import { Navbar } from '../components/navbar';
+
 import { LeaderboardPreview } from '../components/leaderboard';
-import { Footer } from '../components/footer';
+
 import { SectionHeader } from '../components/SectionHeader';
 import { Hero } from '../components/hero';
 
@@ -114,14 +114,14 @@ const Benefits = () => (
 function App() {
   return (
     <div className="font-sans bg-[#0a0a0a] text-gray-100 overflow-x-hidden selection:bg-orange-500/30">
-      <Navbar />
+      
       <Hero />
       <WhatIs />
       <HowItWorks />
       <CoreFeatures />
       <Benefits />
       <LeaderboardPreview />
-      <Footer />
+     
     </div>
   );
 }

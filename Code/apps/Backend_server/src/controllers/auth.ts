@@ -67,7 +67,7 @@ class Auth {
                 }
             });
 
-            return res.status(200)
+            return res.status(201)
                 .cookie("refreshToken", refreshToken, cookieOptions)
                 .cookie("accessToken", accessToken, cookieOptions)
                 .json({
@@ -136,10 +136,12 @@ class Auth {
 
     currentUser = async (req: Request, res: Response) => {
         const { accessToken } = req.cookies;
-
+          
+          
         if (!accessToken) {
             return res.status(401).json({ msg: "Not Authenticated" });
         }
+
 
         try {
             const payload = jwt.verify(accessToken, process.env.JWT_ACCESS_SECRET || "") as JwtPayload;
@@ -147,6 +149,7 @@ class Auth {
             if (!payload || !payload.id) {
                 return res.status(403).json({ msg: "Invalid Token" });
             }
+
 
             const user = await prisma.user.findUnique({
                 where: { id: payload.id },
