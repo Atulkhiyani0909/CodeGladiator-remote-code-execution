@@ -1,0 +1,11 @@
+{
+  "watch": ["src"],
+  "ext": "ts,js,json",
+  "ignore": [
+    "temp/*",
+    "problems/*",
+    "drivers/*",
+    "node_modules"
+  ],
+  "exec": "npx tsx src/index.ts" 
+}

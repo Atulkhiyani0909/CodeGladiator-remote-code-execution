@@ -1,0 +1,7 @@
+1000 2
+$$$DELIMITER$$$
+10 50
+$$$DELIMITER$$$
+-5 5
+$$$DELIMITER$$$
+100 200

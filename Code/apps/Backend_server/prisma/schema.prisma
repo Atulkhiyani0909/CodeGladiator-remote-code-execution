@@ -56,14 +56,14 @@ model Battle {
   winnerId  String?   
   winner    User?     @relation("BattleWinner", fields: [winnerId], references: [id])
 
-  submissions Submission[]
+ 
 }
 
 model Problem {
   id          String   @id @default(uuid())
   title       String
   description String
-  slug        String[]
+  slug        String
   difficulty  String
   testCases   Json
 
@@ -99,8 +99,7 @@ model Submission {
   createdAt DateTime   @default(now())
   output    String?
 
-  BattleId String?
-  battle   Battle? @relation(fields: [BattleId], references: [id])
+
 
   languageId String
   language   Languages @relation(fields: [languageId], references: [id])

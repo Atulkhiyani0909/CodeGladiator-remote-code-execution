@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "Problem" ALTER COLUMN "slug" SET NOT NULL,
+ALTER COLUMN "slug" SET DATA TYPE TEXT;
