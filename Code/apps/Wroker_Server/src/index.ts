@@ -13,8 +13,11 @@ async function main() {
     try {
         await client.connect();
         console.log("✅ Connected to Redis");
-
-        while (true) {
+ 
+        let i = 1 ;
+        while (i) {
+            
+            
             try {
                 
                 const submission = await client.brPop('Execution', 0);
@@ -77,10 +80,12 @@ async function main() {
                 console.error(`⚠️ Error processing specific job:`, jobError.message);
              
             }
+            
         }
     } catch (connectionError: any) {
         console.error("❌ Fatal Redis/Worker Error:", connectionError.message);
     }
+    
 }
 
 

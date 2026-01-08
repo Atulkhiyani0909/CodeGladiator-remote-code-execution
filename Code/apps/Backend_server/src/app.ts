@@ -13,6 +13,7 @@ dotenv.config();
 import authRoutes from './routes/auth.js';
 import codeExecutionRoutes from './routes/codeExecution/index.js'
 import webHookRoutes from './routes/webHook/index.js'
+import SubmissionRoutes from './routes/submissions/index.js'
 
 const limiter = rateLimit({
 	windowMs: 1 * 60 * 1000, // 15 minutes
@@ -36,6 +37,7 @@ app.use(cookieParser());
 app.use('/api/v1/auth', authRoutes);
 app.use('/api/v1/code-execution',limiter, codeExecutionRoutes);
 app.use('/api/v1/webhook', webHookRoutes );
+app.use('/api/v1/submission',SubmissionRoutes);
 
 
 
