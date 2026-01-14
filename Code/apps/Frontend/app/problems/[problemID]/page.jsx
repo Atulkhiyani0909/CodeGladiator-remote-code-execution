@@ -70,10 +70,12 @@ export default function Page() {
 
         if (!problemData.slug || !selectedLang) return;
 
+
         const getBoilerPlateCode = async () => {
             try {
 
                 const res = await axios.get(`http://localhost:3000/boilerplate/${problemData.slug}/${selectedLang}`);
+console.log(res , "Code BoierPlate");
 
                 setSubmissionCode(res.data.code);
 
@@ -144,10 +146,6 @@ export default function Page() {
         setCode(value);
     }
 
-    function submmisionCode(value) {
-        setSubmissionCode(value);
-    }
-
     return (
         <div className="h-screen w-full bg-black text-white overflow-hidden flex flex-col">
 
@@ -173,7 +171,7 @@ export default function Page() {
 
                 <div className="w-1/2 h-full overflow-y-auto custom-scrollbar border-r border-orange-500/20">
                     {submission ? (
-                        <SubmissionStatus submissions={allsubmissions} onCode={submmisionCode} />
+                        <SubmissionStatus submissions={allsubmissions}  />
                     ) : (
                         <ProblemSection problemData={problemData} />
                     )}

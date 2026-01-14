@@ -4,9 +4,9 @@ import prisma from "../../DB/db.js";
 
 export const saveStatusTODB = async  (req: Request) => {
   const { jobId } = req.params;
-  const { success } = req.body;
+  const { success ,output } = req.body;
 
-  console.log(jobId , success);
+  console.log(jobId , success ,output);
   
   if (!jobId) throw new Error("JobId  is required");
 
@@ -15,7 +15,8 @@ export const saveStatusTODB = async  (req: Request) => {
         id:jobId
     },
     data:{
-        status:success ? 'ACCEPTED' : 'WRONG'
+        status:success ? 'ACCEPTED' : 'WRONG',
+        output:output
     }
   })
 
