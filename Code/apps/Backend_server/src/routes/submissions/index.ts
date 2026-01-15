@@ -7,4 +7,6 @@ const router = Router();
 
 router.post('/status/:problemId',submission.getSubmissionStatus);
 
+router.get('/:id',submission.getSubmissionByID);
+
 export default router;

@@ -91,7 +91,7 @@ async function runWorker() {
 
             await saveStatus(job.id, isCorrect, finalOutput);
 
-        } catch (error) {
+        } catch (error:any) {
             console.error(`⚠️ Worker Error:`, error.message);
             // Safety pause to prevent infinite loop crashes
             await new Promise(resolve => setTimeout(resolve, 1000));
@@ -100,7 +100,7 @@ async function runWorker() {
 }
 
 const MAIN_SERVER_URL = 'http://localhost:8080';
-
+//@ts-ignore
 const saveStatus = async (jobId, isSuccess, outputMessage) => {
     try {
         await axios.post(`${MAIN_SERVER_URL}/api/v1/webhook/save/status/${jobId}`, {
@@ -108,7 +108,7 @@ const saveStatus = async (jobId, isSuccess, outputMessage) => {
             output: outputMessage
         });
         console.log(`📡 Status sent to Main Server for ${jobId}`);
-    } catch (err) {
+    } catch (err:any) {
         console.error(`❌ Failed to update Main Server: ${err.message}`);
     }
 }

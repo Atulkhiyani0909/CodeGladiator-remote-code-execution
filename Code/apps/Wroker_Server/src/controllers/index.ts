@@ -11,17 +11,20 @@ export default class BoilerPlate {
     getBoilerPlate = async (req: Request, res: Response) => {
         const { slug, language } = req.params;
 
-console.log(slug,language);
+
 
         if (!slug || !language) {
             return res.status(400).json({ msg: "Slug or Language  is not found " });
         }
 
 
-      
 
-       
-        
+        const cachedCode = await client.get(`code:${slug}-${language}`);
+        if (cachedCode) {
+            return res.status(200).json({ msg: "Boilerplat Code", code: JSON.parse(cachedCode) });
+        }
+
+
         if (!fs.existsSync(PROBLEM_DIR)) {
             return res.status(400).json({ msg: "Problem Folder not found " });
         }
@@ -38,7 +41,9 @@ console.log(slug,language);
             return res.status(400).json({ msg: "BoilerPlate Code is not found " });
         }
 
-       
+        await client.set(`code:${slug}-${language}`,JSON.stringify(boilerPlateCode));
+        await client.expire(`code:${slug}-${language}`,3600);
+
         return res.status(200).json({ msg: "Boilerplat Code", code: boilerPlateCode });
     }
 }

@@ -56,7 +56,7 @@ class CodeExecution {
                 return res.status(500).json({ msg: "Unable to Send the Code to the Execution Server" });
             }
 
-            return res.status(200).json({ msg: "Code is Send for execution wait", result: result });
+            return res.status(200).json({ msg: "Code is Send for execution wait", result: codeTOSend });
         } catch (error) {
             return res.status(500).json({ msg: "Internal Server Error", error: error });
         }

@@ -1,14 +1,9 @@
-import React, { useState } from 'react';
-import { CheckCircle2, XCircle, Clock, FileCode, ChevronRight, AlertTriangle, ArrowLeft } from 'lucide-react';
-import DetailedSubmission from './detailedSubmission';
+import React from 'react';
+import { CheckCircle2, XCircle, Clock, FileCode, ChevronRight, AlertTriangle } from 'lucide-react';
 
-function SubmissionStatus({ submissions }: any) {
-    
-   
-   
-    const [selectedSubmission, setSelectedSubmission] = useState<any>(null);
+// 1. Accept the setter from props
+function SubmissionStatus({ submissions, setSelectedSubmission }: any) {
 
-   
     const getRelativeTime = (dateString: any) => {
         const date = new Date(dateString);
         const now = new Date();
@@ -79,33 +74,9 @@ function SubmissionStatus({ submissions }: any) {
         });
     };
 
-
-   
-    if (selectedSubmission) {
-        return (
-            <div className="flex flex-col h-full">
-              
-                <div className="sticky top-0 z-10 bg-[#0f0f0f] border-b border-gray-800 p-2 mb-2">
-                    <button 
-                        onClick={() => setSelectedSubmission(null)} // Clear state to go back
-                        className="flex items-center gap-2 text-sm text-gray-400 hover:text-white transition-colors"
-                    >
-                        <ArrowLeft size={16} />
-                        Back to History
-                    </button>
-                </div>
-
-             
-                <DetailedSubmission submissionDetail={selectedSubmission} />
-            </div>
-        );
-    }
-
-    
     return (
         <div className="w-full px-4 py-4 flex flex-col h-[85vh]">
             
-         
             <div className="sticky top-0 z-10 bg-[#0f0f0f] pt-1 pb-4">
                 <br />
                 <h3 className="text-lg font-bold text-white border-l-4 border-orange-500 pl-3">
@@ -113,14 +84,12 @@ function SubmissionStatus({ submissions }: any) {
                 </h3>
             </div>
 
-         
             <div className="flex flex-col gap-3 overflow-y-auto pr-2 custom-scrollbar pb-10 flex-1">
                 {submissions.length === 0 ? (
                     <div className="text-gray-500 text-sm italic py-4 text-center border border-dashed border-gray-800 rounded-lg">
                         No submissions yet.
                     </div>
                 ) : (
-                 
                     submissions.map((sub: any) => {
                         const now = new Date();
                         const created = new Date(sub.createdAt);
@@ -142,7 +111,10 @@ function SubmissionStatus({ submissions }: any) {
                                     ${style.bg} ${style.border} transition-all hover:brightness-150 group shrink-0
                                 `}
                                 onClick={() => {
-                                    setSelectedSubmission(sub);
+                                    // 2. Call the parent setter with the FULL object
+                                    if(setSelectedSubmission) {
+                                        setSelectedSubmission(sub);
+                                    }
                                 }}
                             >
                                 <div className="flex items-center gap-4">

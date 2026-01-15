@@ -6,9 +6,9 @@ import cookieParser from 'cookie-parser'
 import { rateLimit } from 'express-rate-limit'
 
 
-
-
 dotenv.config();
+
+
 
 import authRoutes from './routes/auth.js';
 import codeExecutionRoutes from './routes/codeExecution/index.js'
