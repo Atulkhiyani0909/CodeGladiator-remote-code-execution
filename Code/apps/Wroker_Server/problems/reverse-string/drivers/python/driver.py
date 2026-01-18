@@ -19,7 +19,7 @@ def main():
                 
             lines = test_case.strip().split('\n')
             
-        arg0 = lines[0].strip()
+            arg0 = lines[0].strip()
 
             result = sol.reverseString(arg0)
             print(result)

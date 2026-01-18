@@ -7,14 +7,14 @@ import cookieParser from 'cookie-parser';
 import BoilerPlateRoutes from './routes/index.js';
 import client from './Redis/index.js';
 
-const app = express();
+const app = express(); 
 
-app.use(cors({ origin: ["http://localhost:3001", "http://localhost:8080"], credentials: true }));
+app.use(cors({ origin: ["https://savings-rick-hearts-petite.trycloudflare.com","http://localhost:3001", "https://suites-calendar-returned-periods.trycloudflare.com"], credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
-// 1. Register Routes
+
 app.use('/boilerplate', BoilerPlateRoutes);
 
 async function startServer() {

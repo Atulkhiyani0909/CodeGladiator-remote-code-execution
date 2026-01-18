@@ -37,7 +37,7 @@ export default function Page() {
         const fetchData = async () => {
             try {
              
-                const langRes = await axios.get('http://localhost:8080/api/v1/language/all-languages');
+                const langRes = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_SERVER_URL}/language/all-languages`);
                 const fetchedLanguages = langRes.data.data;
                 setLanguages(fetchedLanguages);
 
@@ -51,7 +51,7 @@ export default function Page() {
                 }
 
               
-                const probRes = await axios.get(`http://localhost:8080/api/v1/problem/${problemID}`);
+                const probRes = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_SERVER_URL}/problem/${problemID}`);
                 setProblemData(probRes.data.res);
 
             } catch (err) {
@@ -68,7 +68,9 @@ export default function Page() {
         
         const getBoilerPlateCode = async () => {
             try {
-                const res = await axios.get(`http://localhost:3000/boilerplate/${problemData.slug}/${selectedLang}`);
+                const res = await axios.get(`${process.env.NEXT_PUBLIC_WORKER_URL}/boilerplate/${problemData.slug}/${selectedLang}`);
+                
+                
                 setSubmissionCode(res.data.code);
             } catch (err) {
                 console.error("Error getting boilerplate", err);
@@ -86,7 +88,7 @@ export default function Page() {
             const token = await getToken(); 
             
             let data = { userId: userId };
-            let res = await axios.post(`http://localhost:8080/api/v1/submission/status/${problemID}`, data, {
+            let res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_SERVER_URL}/submission/status/${problemID}`, data, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
@@ -145,7 +147,7 @@ export default function Page() {
                 problemId: problemID
             };
 
-            const res = await axios.post('http://localhost:8080/api/v1/code-execution/execute', data, {
+            const res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_SERVER_URL}/code-execution/execute`, data, {
                 headers: { Authorization: `Bearer ${token}` }
             });
 

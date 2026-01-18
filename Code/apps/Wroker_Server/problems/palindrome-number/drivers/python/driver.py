@@ -19,7 +19,7 @@ def main():
                 
             lines = test_case.strip().split('\n')
             
-        arg0 = int(lines[0])
+            arg0 = int(lines[0])
 
             result = sol.isPalindrome(arg0)
             print(result)

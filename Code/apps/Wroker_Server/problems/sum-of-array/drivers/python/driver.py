@@ -19,7 +19,7 @@ def main():
                 
             lines = test_case.strip().split('\n')
             
-        arg0 = int(lines[0])
+            arg0 = int(lines[0])
         # Arg 1: Smart Parse (JSON or Space-Separated)
             raw_val = lines[1].strip()
             if raw_val.startswith("["):

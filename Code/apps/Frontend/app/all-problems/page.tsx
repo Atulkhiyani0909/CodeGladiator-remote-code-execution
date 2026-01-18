@@ -20,7 +20,7 @@ export default function ProblemList() {
 
     useEffect(() => {
         const getAllProblems = async () => {
-            const res = await axios.get('http://localhost:8080/api/v1/problem/all');
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_SERVER_URL}/problem/all`);
             setProblems(res.data.data);
         }
 

@@ -30,7 +30,7 @@ const limiter = rateLimit({
 
 const app = express();
 
-app.use(cors({ origin: ["http://localhost:3001", "http://localhost:3000"], credentials: true }));
+app.use(cors({ origin: ["http://localhost:3001", "http://localhost:3000","https://alt-measurement-emerald-chest.trycloudflare.com","https://savings-rick-hearts-petite.trycloudflare.com"], credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());

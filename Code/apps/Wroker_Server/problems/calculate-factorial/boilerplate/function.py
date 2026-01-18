@@ -1,4 +1,4 @@
-from typing import List, Dict, Optional
+from typing import Any, List, Dict, Optional
 import json
 
 class Solution:

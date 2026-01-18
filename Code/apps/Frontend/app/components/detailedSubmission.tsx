@@ -14,7 +14,7 @@ function DetailedSubmission({ submissionId, onBack }: any) {
     const fetchDetails = async () => {
         try {
           
-            const res = await axios.get(`http://localhost:8080/api/v1/submission/${submissionId}`);
+            const res = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_SERVER_URL}/submission/${submissionId}`);
            
             
             const submission = res.data.code;
