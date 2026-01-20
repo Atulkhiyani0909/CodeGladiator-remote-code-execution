@@ -1,4 +1,3 @@
-import axios from "axios"
 import { create } from "zustand"
 
 interface SocketState {
@@ -9,14 +8,14 @@ interface SocketState {
 
 export const useSocket = create<SocketState>((set, get) => ({
     socket: null,
-    connect: (token: string) => {
+    connect: (userId: string) => {
 
         if (get().socket) return;
 
         console.log(" Connecting to WebSocket...");
 
 
-        const newSocket = new WebSocket(`ws://localhost:8080?token=${token}`);
+        const newSocket = new WebSocket(`ws://localhost:8080?userId=${userId}`);
 
         newSocket.onopen = () => {
             console.log(" WebSocket Connected");
@@ -37,5 +36,7 @@ export const useSocket = create<SocketState>((set, get) => ({
             socket.close();
             set({ socket: null });
         }
-    }
+    },
+
+  
 }))

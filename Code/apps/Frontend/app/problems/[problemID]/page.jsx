@@ -6,42 +6,42 @@ import ProblemSection from '../../components/ProblemSection';
 import { Loader2, Play } from 'lucide-react';
 import axios from 'axios';
 import SubmissionStatus from '../../components/SubmissionStatus';
-import DetailedSubmission from '../../components/detailedSubmission'; 
+import DetailedSubmission from '../../components/detailedSubmission';
 import { useParams } from 'next/navigation';
 import { useAuth } from '@clerk/nextjs';
 
 export default function Page() {
-    
-    const { getToken, userId, isLoaded } = useAuth(); 
+
+    const { getToken, userId, isLoaded } = useAuth();
     const { problemID } = useParams();
 
     const [languages, setLanguages] = useState([]);
     const [problemData, setProblemData] = useState({});
     const [allsubmissions, setSubmissions] = useState([]);
-    
-   
+
+
     const [disabled, setDisabled] = useState(false);
     const [theme, setTheme] = useState("vs-dark");
     const [fontSize, setFontSize] = useState(16);
     const [submissionTab, setSubmissionTab] = useState(false);
     const [selectedSubmissionId, setSelectedSubmissionId] = useState(null);
 
-    
+
     const [selectedLang, setSelectedLang] = useState("javascript");
     const [selectedLangId, setSelectedLangId] = useState("");
     const [currcode, setCode] = useState('');
     const [submissionCodeValue, setSubmissionCode] = useState("");
 
-   
+
     useEffect(() => {
         const fetchData = async () => {
             try {
-             
+
                 const langRes = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_SERVER_URL}/language/all-languages`);
                 const fetchedLanguages = langRes.data.data;
                 setLanguages(fetchedLanguages);
 
-              
+
                 const defaultLang = fetchedLanguages.find((lang) => lang.name.toLowerCase() === "javascript");
                 if (defaultLang) {
                     setSelectedLangId(defaultLang.id);
@@ -50,7 +50,7 @@ export default function Page() {
                     setSelectedLangId(fetchedLanguages[0].id);
                 }
 
-              
+
                 const probRes = await axios.get(`${process.env.NEXT_PUBLIC_BACKEND_SERVER_URL}/problem/${problemID}`);
                 setProblemData(probRes.data.res);
 
@@ -62,15 +62,15 @@ export default function Page() {
         if (problemID) fetchData();
     }, [problemID]);
 
-    
+
     useEffect(() => {
         if (!problemData.slug || !selectedLang) return;
-        
+
         const getBoilerPlateCode = async () => {
             try {
                 const res = await axios.get(`${process.env.NEXT_PUBLIC_WORKER_URL}/boilerplate/${problemData.slug}/${selectedLang}`);
-                
-                
+
+
                 setSubmissionCode(res.data.code);
             } catch (err) {
                 console.error("Error getting boilerplate", err);
@@ -80,13 +80,13 @@ export default function Page() {
     }, [selectedLang, problemData]);
 
 
-   
+
     const fetchSubmissionsList = useCallback(async () => {
-        if (!userId) return; 
+        if (!userId) return;
 
         try {
-            const token = await getToken(); 
-            
+            const token = await getToken();
+
             let data = { userId: userId };
             let res = await axios.post(`${process.env.NEXT_PUBLIC_BACKEND_SERVER_URL}/submission/status/${problemID}`, data, {
                 headers: { Authorization: `Bearer ${token}` }
@@ -100,9 +100,9 @@ export default function Page() {
         }
     }, [userId, problemID, getToken]);
 
-    
+
     useEffect(() => {
-      
+
         fetchSubmissionsList();
 
         const interval = setInterval(() => {
@@ -113,7 +113,7 @@ export default function Page() {
     }, [fetchSubmissionsList]);
 
 
-  
+
     const handleLanguageChange = (e) => {
         const newName = e.target.value;
         setSelectedLang(newName);
@@ -138,7 +138,7 @@ export default function Page() {
         setDisabled(true);
 
         try {
-            const token = await getToken(); 
+            const token = await getToken();
 
             let data = {
                 code: currcode,
@@ -151,16 +151,16 @@ export default function Page() {
                 headers: { Authorization: `Bearer ${token}` }
             });
 
-           
+
             setSubmissionTab(true);
 
-          
+
             const newSubmissionId = res.data.data?.id || res.data.result?.id;
             if (newSubmissionId) {
                 setSelectedSubmissionId(newSubmissionId);
             }
 
-        
+
             fetchSubmissionsList();
 
         } catch (error) {
@@ -177,8 +177,8 @@ export default function Page() {
 
     return (
         <div className="h-screen w-full bg-black text-white overflow-hidden flex flex-col">
-            
-         
+
+
             <div className="fixed top-0 left-0 right-0 z-50 bg-black border-b border-orange-500/30 h-16 flex items-center justify-center">
                 <div className="flex justify-center gap-4">
                     <button
@@ -200,10 +200,10 @@ export default function Page() {
                 </div>
             </div>
 
-          
+
             <div className="flex flex-1 pt-16 h-full">
 
-              
+
                 <div className="w-1/2 h-full overflow-y-auto custom-scrollbar border-r border-orange-500/20">
                     {!submissionTab && (
                         <ProblemSection problemData={problemData} />
@@ -224,9 +224,9 @@ export default function Page() {
                     )}
                 </div>
 
-               
+
                 <div className="w-1/2 h-full flex flex-col bg-[#0f0f0f] relative border-l border-orange-500/30">
-               
+
                     <div className="flex items-center justify-between px-4 py-3 border-b border-orange-500/20 bg-black shrink-0">
                         <select
                             value={selectedLang}
@@ -259,7 +259,7 @@ export default function Page() {
                         </div>
                     </div>
 
-                   
+
                     <div className="flex-1 relative overflow-hidden">
                         <CodeEditor
                             language={selectedLang}
@@ -270,7 +270,7 @@ export default function Page() {
                         />
                     </div>
 
-                   
+
                     {userId ? (
                         <button
                             disabled={disabled}

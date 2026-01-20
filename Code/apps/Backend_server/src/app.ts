@@ -80,11 +80,25 @@ enum Status {
     CREATED
 }
 
+enum Difficulty {
+    EASY,
+    MEDIUM,
+    HARD,
+    MIXED
+}
+
+enum BattleType {
+    PUBLIC,
+    PRIVATE
+}
+
 interface battleInfo {
-    Totalproblems: Number,
+    Totalproblems: number,
     winner?: string,
     problemsId: string[],
-    status: Status
+    status: Status,
+    difficulty: Difficulty,
+    BattleType: BattleType
 }
 
 
@@ -112,19 +126,12 @@ function haveMet(user1: Id, user2: Id): boolean {
 
 
 function findMatch(myUserID: Id): string | null {
-    // 1. Shuffle queue first to prevent "sniping"
-    shuffleArray(users_queue);
 
-    // 2. Iterate through queue to find a valid match
+    shuffleArray(users_queue);
     for (let i = 0; i < users_queue.length; i++) {
         const potentialOpponent: any = users_queue[i];
-
-        // Don't match with self
         if (potentialOpponent === myUserID) continue;
-
-        // CHECK HISTORY: Have they met?
         if (!haveMet(myUserID, potentialOpponent)) {
-            // FOUND ONE! Remove them from the queue
             users_queue.splice(i, 1);
             return potentialOpponent;
         }
@@ -162,37 +169,44 @@ wss.on('connection', async (ws, req: Request) => {
 
 
     const url = new URL(req.url || '', `http://${req.headers.host}`);
-    const token = url.searchParams.get('token');
+    const requesterId = url.searchParams.get('userId');
 
-    if (!token) {
-        console.log(" No token provided");
+    if (!requesterId) {
+        console.log(" No Id provided");
         ws.close();
         return;
     }
 
-    const verifiedToken = await verifyToken(token, {
-        secretKey: process.env.CLERK_SECRET_KEY!
-    } as any);
 
 
-    const userId = verifiedToken.sub
 
-
-    const user = await getOrCreateUser(userId);
+    const userId = requesterId;
 
 
     const userID: Id = userId;
 
-    const UserData: Users = {
-        id: userID,
-        socket: ws,
-        history: []
+
+
+    let user = users.get(userId);
+
+    if (!user) {
+        const UserData: Users = {
+            id: userID,
+            socket: ws,
+            history: []
+        }
+
+        users.set(userID, UserData);
+    } else {
+
+        console.log('User already exists Updating the Socket only for that User');
+
+        user.socket = ws;
+
+        
     }
 
-
-    users.set(userID, UserData);
-    console.log(users);
-
+    console.log(users, 'MAP of the USER ');
 
     ws.on("message", (msg: any, isBinary: any) => {
         const utf8String = isBinary
@@ -209,31 +223,42 @@ wss.on('connection', async (ws, req: Request) => {
             return;
         }
 
-        console.log(data.msg, data.ID);
+        console.log(data.msg, data.data);
+
+
+        if(data.msg=='TEST'){
+            console.log(data);
+            
+           users.forEach((e)=>{
+            e.socket?.send(JSON.stringify({msg:"this is the test message from the Server To ALL the clients"}));
+           })
+        }
 
         switch (data.msg) {
-            case "create":
+            case "CREATE":
                 const roomID = uuidv1();
                 console.log(roomID);
 
                 room_map.set(roomID, {
                     Users: [],
                     battleInfo: {
-                        Totalproblems: 0,
+                        Totalproblems: data.Totalproblems,
                         problemsId: [],
-                        status: Status.CREATED
+                        status: Status.CREATED,
+                        BattleType: data.BattleType,
+                        difficulty: data.difficulty
                     }
                 });
 
                 console.log(room_map);
                 const userDetails = users.get(data.userID);
 
-                userDetails?.socket?.send(JSON.stringify({ msg: "ROOMID", data: roomID }));
+                userDetails?.socket?.send(JSON.stringify({ msg: "ROOM_ID", data: roomID }));
 
-                userDetails?.socket?.send(JSON.stringify({ msg: "ROOMCREATED", data: `Room Created Succesfully ${roomID}` }))
+                userDetails?.socket?.send(JSON.stringify({ msg: "ROOM_CREATED", data: `Room Created Succesfully ${roomID}` }))
                 break;
 
-            case "join":
+            case "JOIN":
                 console.log(`Joining Room for the Battle`);
                 const room = data.roomID;
 
@@ -247,23 +272,23 @@ wss.on('connection', async (ws, req: Request) => {
 
                 if (room_details) {
                     if (room_details.Users.length == 2) {
-                        user.socket?.send('Room is Full you are unable to join it ');
+                        user.socket?.send(JSON.stringify({ msg: 'ROOM_FULL_WARNING', data: 'Room is Full you are unable to join it' }));
                     } else {
                         room_details.Users.push(user);
                         room_details.Users.map((e) => {
                             if (e.id != data.userID) {
-                                e.socket?.send(JSON.stringify({ msg: "UserNotify", data: `New User Joined With ID ${data.userID}` }));
+                                e.socket?.send(JSON.stringify({ msg: "USER_NOTIFY_NEW_PLAYER", data: `New User Joined With ID ${data.userID}` }));
                             }
                         })
 
                         if (room_details.Users.length == 2) {
                             room_details.Users.map((e) => {
-                                e.socket?.send(JSON.stringify({ msg: "Ready", data: 'Starting the Battle ' }));
+                                e.socket?.send(JSON.stringify({ msg: "READY", data: 'Starting the Battle ' }));
                             })
 
-                            let problemsToSend = getRandomProblems(problems, 5);
+                            let problemsToSend = getRandomProblems(problems, room_details.battleInfo.Totalproblems);
                             room_details.Users.map((e) => {
-                                e.socket?.send(JSON.stringify({ msg: "problems", data: { problemsToSend } }));
+                                e.socket?.send(JSON.stringify({ msg: "PROBLEMS", data: { problemsToSend } }));
                             })
                         }
                     }
@@ -272,9 +297,8 @@ wss.on('connection', async (ws, req: Request) => {
 
                 } else {
                     console.log('Room not Found');
-                    ws.send('No Room Found with this ID ');
+                    ws.send(JSON.stringify({ msg: "NOTIFY_ROOM_NOT_FOUND", data: "Room with this Id doesn't exists" }));
                 }
-
                 break;
 
             default:
