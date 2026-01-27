@@ -546,6 +546,10 @@ wss.on('connection', async (ws, req: Request) => {
                     e.socket?.send(JSON.stringify({ msg: "GAME_OVER_WINNER", data: { winner: _room_.battleInfo.winner } }));
                 })
 
+                _room_.Users.map((e) => {
+                    e.inBattle = false;
+                })
+
                 break;
             case 'OPPONENT_LEAVING':
                 const _room = room_map.get(data.roomId);
@@ -570,6 +574,10 @@ wss.on('connection', async (ws, req: Request) => {
 
                 _room.Users.map((e) => {
                     e.socket?.send(JSON.stringify({ msg: "GAME_OVER_WINNER", data: { winner: _room.battleInfo.winner } }));
+                })
+
+                _room.Users.map((e) => {
+                    e.inBattle = false;
                 })
 
                 break;
@@ -602,6 +610,10 @@ wss.on('connection', async (ws, req: Request) => {
 
                 console.log(`🏆 Winner is User: ${winnerId_} with ${maxSolved_} problems solved.`);
 
+                room_status.Users.map((e)=>{
+                    e.inBattle=false;
+                })
+
                 room_status.Users.map((e) => {
                     e.socket?.send(JSON.stringify({ msg: "GAME_OVER_WINNER", data: { winner: room_status.battleInfo.winner } }));
                 })
@@ -616,7 +628,7 @@ wss.on('connection', async (ws, req: Request) => {
                 const user_find = users.get(userid);
                 if (!user_find) return;
 
-               
+
                 if (user_find.inBattle) {
                     return;
                 }
@@ -624,7 +636,7 @@ wss.on('connection', async (ws, req: Request) => {
                 const partnerID = findMatch(userid);
 
                 if (!partnerID) {
-                    
+
                     if (!users_queue.includes(userid)) {
                         users_queue.push(userid);
                     }
@@ -638,11 +650,11 @@ wss.on('connection', async (ws, req: Request) => {
                 const partnerUser = users.get(partnerID);
                 if (!partnerUser) return;
 
-                
+
                 user_find.inBattle = true;
                 partnerUser.inBattle = true;
 
-              
+
                 const myIndex = users_queue.indexOf(userid);
                 if (myIndex !== -1) users_queue.splice(myIndex, 1);
 
