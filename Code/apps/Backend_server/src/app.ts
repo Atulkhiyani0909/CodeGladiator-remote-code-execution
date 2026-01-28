@@ -20,8 +20,7 @@ import { getOrCreateUser } from './utils/userSync.js';
 import { verifyToken } from '@clerk/clerk-sdk-node';
 import prisma from './DB/db.js';
 import client from './Redis/index.js';
-import { Prisma } from '@prisma/client';
-
+import  BattleHistoryRoutes from './routes/battleHistory/index.js'
 
 
 
@@ -35,7 +34,7 @@ const limiter = rateLimit({
 
 const app = express();
 
-app.use(cors({ origin: ["http://localhost:3001", "http://localhost:3000"], credentials: true }));
+app.use(cors({ origin: ["http://localhost:3001", "http://localhost:3000", "https://enemies-partners-defined-clock.trycloudflare.com"], credentials: true }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
@@ -53,13 +52,14 @@ const server = app.listen(8080, () => {
 
 
 
-app.use('/api/v1/code-execution', limiter, codeExecutionRoutes);
+app.use('/api/v1/code-execution',limiter, codeExecutionRoutes);
 app.use('/api/v1/submission', SubmissionRoutes);
 app.use('/api/v1/problem', ProblemsRoutes);
 app.use('/api/v1/language', LanguageRoutes);
+app.use('/api/v1/battle',BattleHistoryRoutes);
 
 
-//WEBSOCKETS 
+
 
 enum ProblemStatus {
     PENDING = "PENDING",
@@ -441,17 +441,17 @@ wss.on('connection', async (ws, req: Request) => {
 
             case "SUBMIT_CODE":
                 const room_ = room_map.get(data.data.roomID);
-                const { code, userId: uId, languageId, problemId } = data.data;
+                const { code, userId, languageId, problemId } = data.data;
 
                 if (!room_) {
                     console.log("Room not found for submission");
                     return;
                 }
 
-                console.log(`Processing submission for User ${uId} on Problem ${problemId}`);
+                console.log(`Processing submission for User ${userId} on Problem ${problemId}`);
 
 
-                const submissionResult = await getProblemStatus(code, uId, languageId, problemId);
+                const submissionResult = await getProblemStatus(code, userId, languageId, problemId);
                 console.log(submissionResult, 'this is the submission resutl ');
 
                 if (!submissionResult) {
@@ -465,7 +465,7 @@ wss.on('connection', async (ws, req: Request) => {
 
 
 
-                const currentUser = room_.Users.find((u) => u.id === uId);
+                const currentUser = room_.Users.find((u) => u.id === userId);
                 if (currentUser) {
                     currentUser.progress[problemId] = isSuccess ? ProblemStatus.SOLVED : ProblemStatus.FAILED;
                 }
@@ -496,8 +496,19 @@ wss.on('connection', async (ws, req: Request) => {
                     room_.Users.forEach((e) => {
                         e.socket?.send(JSON.stringify({
                             msg: "GAME_OVER_WINNER",
-                            data: { winner: uId }
+                            data: { winner: userId }
                         }));
+                    });
+
+                    await prisma.battle.create({
+                        data: {
+                            status: 'FINISHED',
+                            startTime: new Date(room_.battleInfo.startTime || Date.now()),
+                            endTime: new Date(),
+                            playerAId: room_.Users[0]!.id,
+                            playerBId: room_.Users[1]!.id,
+                            winnerId: userId
+                        }
                     });
                 }
                 break;
@@ -550,6 +561,17 @@ wss.on('connection', async (ws, req: Request) => {
                     e.inBattle = false;
                 })
 
+                await prisma.battle.create({
+                    data: {
+                        status: 'FINISHED',
+                        startTime: new Date(_room_.battleInfo.startTime || Date.now()),
+                        endTime: new Date(),
+                        playerAId: _room_.Users[0]!.id,
+                        playerBId: _room_.Users[1]!.id,
+                        winnerId: winnerId
+                    }
+                });
+
                 break;
             case 'OPPONENT_LEAVING':
                 const _room = room_map.get(data.roomId);
@@ -579,6 +601,17 @@ wss.on('connection', async (ws, req: Request) => {
                 _room.Users.map((e) => {
                     e.inBattle = false;
                 })
+
+                await prisma.battle.create({
+                    data: {
+                        status: 'FINISHED',
+                        startTime: new Date(_room.battleInfo.startTime || Date.now()),
+                        endTime: new Date(),
+                        playerAId: _room.Users[0]!.id,
+                        playerBId: _room.Users[1]!.id,
+                        winnerId: winnerID
+                    }
+                });
 
                 break;
 
@@ -610,13 +643,24 @@ wss.on('connection', async (ws, req: Request) => {
 
                 console.log(`🏆 Winner is User: ${winnerId_} with ${maxSolved_} problems solved.`);
 
-                room_status.Users.map((e)=>{
-                    e.inBattle=false;
+                room_status.Users.map((e) => {
+                    e.inBattle = false;
                 })
 
                 room_status.Users.map((e) => {
                     e.socket?.send(JSON.stringify({ msg: "GAME_OVER_WINNER", data: { winner: room_status.battleInfo.winner } }));
                 })
+
+                await prisma.battle.create({
+                    data: {
+                        status: 'FINISHED',
+                        startTime: new Date(room_status.battleInfo.startTime || Date.now()),
+                        endTime: new Date(),
+                        playerAId: room_status?.Users[0]!.id,
+                        playerBId: room_status?.Users[1]!.id,
+                        winnerId: winnerId_
+                    }
+                });
 
                 break;
 

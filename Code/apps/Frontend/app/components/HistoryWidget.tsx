@@ -1,20 +1,124 @@
-export const HistoryWidget = () => (
-    <div className="space-y-3 mt-10">
-        {[
-            { res: 'WIN', time: '12m ago', opp: 'CyberNinja', score: '+25' },
-            { res: 'LOSS', time: '2h ago', opp: 'AlgoMaster', score: '-18' },
-            { res: 'WIN', time: '5h ago', opp: 'DevKiller', score: '+30' },
-        ].map((match, i) => (
-            <div key={i} className="flex justify-between items-center p-3 rounded-lg bg-white/5 hover:bg-white/10 transition-colors cursor-pointer border-l-2 border-transparent hover:border-orange-500">
-                <div className="flex flex-col">
-                    <span className={`text-xs font-bold ${match.res === 'WIN' ? 'text-green-500' : 'text-red-500'}`}>{match.res}</span>
-                    <span className="text-[10px] text-gray-500">{match.time}</span>
-                </div>
-                <div className="text-right">
-                    <div className="text-sm font-medium text-gray-300">{match.opp}</div>
-                    <div className="text-xs text-gray-500">{match.score} LP</div>
-                </div>
+'use client';
+
+import { useEffect, useState } from 'react';
+import axios from 'axios';
+import { useAuth } from '@clerk/nextjs';
+import { Loader2, AlertCircle, Swords } from 'lucide-react';
+
+const getTimeAgo = (dateString: any) => {
+    const now: any = new Date();
+    const past: any = new Date(dateString);
+    const diffMs = now - past;
+    const diffMins = Math.round(diffMs / 60000);
+    const diffHrs = Math.round(diffMs / 3600000);
+    const diffDays = Math.round(diffMs / 86400000);
+
+    if (diffMins < 60) return `${diffMins}m ago`;
+    if (diffHrs < 24) return `${diffHrs}h ago`;
+    return `${diffDays}d ago`;
+};
+
+export const HistoryWidget = () => {
+    const { userId, getToken } = useAuth();
+    const [history, setHistory] = useState([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState(false);
+
+    useEffect(() => {
+        const fetchHistory = async () => {
+            if (!userId) return;
+
+            try {
+                const token = await getToken();
+
+                const res = await axios.get(
+                    `${process.env.NEXT_PUBLIC_BACKEND_SERVER_URL}/battle/history/${userId}`,
+                    { headers: { Authorization: `Bearer ${token}` } }
+                );
+
+                const formattedData = res.data.data.map((battle: any) => {
+                    const isWinner = battle.winnerId === userId;
+
+                    const opponent = battle.playerAId === userId
+                        ? battle.playerB
+                        : battle.playerA;
+
+                    const opponentName = opponent?.name || "Unknown";
+
+                    return {
+                        res: isWinner ? 'WIN' : 'LOSS',
+                        time: getTimeAgo(battle.startTime),
+                        opp: opponentName
+                    };
+                });
+
+                setHistory(formattedData);
+            } catch (err) {
+                console.error("Failed to fetch battle history:", err);
+                setError(true);
+            } finally {
+                setLoading(false);
+            }
+        };
+
+        fetchHistory();
+    }, [userId, getToken]);
+
+    if (loading) {
+        return (
+            <div className="mt-10 flex justify-center py-4">
+                <Loader2 className="animate-spin text-orange-500" size={24} />
             </div>
-        ))}
-    </div>
-);
+        );
+    }
+
+    if (error) {
+        return (
+            <div className="mt-10 flex items-center justify-center gap-2 text-red-500 text-xs bg-red-500/10 p-3 rounded-lg border border-red-500/20">
+                <AlertCircle size={14} /> Failed to load history
+            </div>
+        );
+    }
+
+    if (history.length === 0) {
+        return (
+            <div className="mt-10 flex flex-col items-center justify-center py-8 bg-zinc-900/30 rounded-xl border border-dashed border-zinc-800">
+                <Swords className="text-zinc-600 mb-2" size={24} />
+                <span className="text-zinc-500 text-sm font-medium">No battles recorded yet.</span>
+            </div>
+        );
+    }
+
+    return (
+        <div className="space-y-2 mt-8">
+            {history.map((match: any, i) => (
+                <div 
+                    key={i} 
+                    className="group flex justify-between items-center p-3.5 rounded-xl bg-zinc-900/40 border border-white/5 hover:border-orange-500/30 hover:bg-zinc-900/80 transition-all duration-300"
+                >
+               
+                    <div className="flex flex-col gap-1">
+                        <span className={`text-xs font-black tracking-widest uppercase ${
+                            match.res === 'WIN' 
+                                ? 'text-green-500 drop-shadow-[0_0_8px_rgba(34,197,94,0.3)]' 
+                                : 'text-red-500 drop-shadow-[0_0_8px_rgba(239,68,68,0.3)]'
+                        }`}>
+                            {match.res}
+                        </span>
+                        <span className="text-[10px] text-zinc-500 font-mono font-medium group-hover:text-zinc-400 transition-colors">
+                            {match.time}
+                        </span>
+                    </div>
+
+                   
+                    <div className="text-right flex items-center gap-2">
+                        <span className="text-[10px] font-bold text-zinc-700 uppercase tracking-wider">VS</span>
+                        <span className="text-sm font-bold text-zinc-300 group-hover:text-white transition-colors truncate max-w-[120px]">
+                            {match.opp}
+                        </span>
+                    </div>
+                </div>
+            ))}
+        </div>
+    );
+};
