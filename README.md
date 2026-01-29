@@ -2,8 +2,7 @@
 
 > **Where Code Meets Glory.** A real-time competitive programming arena built for developers to battle, rank up, and prove their algorithmic prowess.
 
-![Project Banner](<img width="1898" height="855" alt="image" src="https://github.com/user-attachments/assets/6cd4bc1f-cfa7-4ca0-8d41-95683a981390" />)
-*(Replace this link with a screenshot of your Battle Dashboard)*
+
 
 ## 🚀 Introduction
 
@@ -34,7 +33,7 @@ This project utilizes an **Event-Driven Architecture** to handle high-concurrenc
 | **Queue & Pub/Sub** | Redis |
 | **Code Execution** | Docker |
 | **Authentication** | Clerk Auth |
-| **Deployment** | (Add where you deployed it, e.g., Vercel + AWS EC2) |
+
 
 ## ✨ Key Features
 
@@ -53,9 +52,9 @@ Follow these steps to run the project locally.
 
 ### Prerequisites
 * Node.js (v18+)
-* Docker (Desktop or Engine) running
+* Docker (Desktop ) running
 * PostgreSQL Database
-* Redis instance (local or cloud)
+* Redis instance 
 
 ### 1. Clone the Repository
 ```bash
