@@ -24,16 +24,26 @@ public class Run {
         while (true) {
             pos = content.indexOf(DELIMITER, prev);
             String testCase = (pos != -1)
-                ? content.substring(prev, pos)
-                : content.substring(prev);
+                    ? content.substring(prev, pos)
+                    : content.substring(prev);
 
             if (!testCase.trim().isEmpty()) {
                 Scanner scanner = new Scanner(testCase.trim());
 
-                // Type List<int> not fully supported in generator
-                // Type List<int> not fully supported in generator
+                // ===== FIXED ARGUMENT GENERATION =====
+                int n = scanner.nextInt();
+                List<Integer> arg0 = new ArrayList<>();
+                for (int i = 0; i < n; i++) {
+                    arg0.add(scanner.nextInt());
+                }
 
-                // Assuming static method
+                int m = scanner.nextInt();
+                List<Integer> arg1 = new ArrayList<>();
+                for (int i = 0; i < m; i++) {
+                    arg1.add(scanner.nextInt());
+                }
+                // ====================================
+
                 var result = intersection(arg0, arg1);
                 System.out.println(result);
                 System.out.println(DELIMITER);
