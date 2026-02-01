@@ -2,7 +2,3 @@
 $$$DELIMITER$$$
 "Hannah"
 $$$DELIMITER$$$
-"a"
-$$$DELIMITER$$$
-""
-$$$DELIMITER$$$

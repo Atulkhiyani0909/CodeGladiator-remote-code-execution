@@ -1,6 +1,6 @@
 {
   "slug": "remove-duplicates",
-  "name": "Remove Duplicates from Sorted Array",
+  "name": "Remove Duplicates",
   "params": [
     {
       "name": "nums",
@@ -8,5 +8,5 @@
     }
   ],
   "returnType": "List<int>",
-  "totalTestCases": 5
+  "totalTestCases": 3
 }

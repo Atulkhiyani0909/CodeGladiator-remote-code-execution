@@ -1,9 +1,9 @@
 import java.io.*;
 import java.util.*;
 import java.util.stream.*;
-import java.nio.file.*; // <--- CRITICAL IMPORT
-import java.nio.file.Files; // Explicitly import Files to be safe
-import java.nio.file.Paths; // Explicitly import Paths to be safe
+import java.nio.file.*;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Run {
 
@@ -15,11 +15,9 @@ public class Run {
 
         String content = "";
         try {
-            // Read file content safely
             content = Files.readString(Paths.get(INPUT_FILE));
         } catch (IOException e) { return; }
 
-        // Regex split with safe delimiter escaping
         String[] testCases = content.split(java.util.regex.Pattern.quote(DELIMITER));
 
         for (String testCase : testCases) {
@@ -31,18 +29,17 @@ public class Run {
                 String raw0 = scanner.hasNextLine() ? scanner.nextLine().trim() : "";
                 List<Integer> arg0 = parseIntegerList(raw0);
 
+                // Call user function
                 var result = missingNumber(arg0);
                 
-                // Sort Lists to ensure [4,9] matches [9,4]
-                if (result instanceof List) {
-                     Collections.sort((List<Integer>) result);
-                }
+               
 
                 printResult(result);
                 System.out.println();
                 System.out.println(DELIMITER);
 
             } catch (Exception e) {
+                e.printStackTrace();
             } finally {
                 scanner.close();
             }
@@ -76,6 +73,8 @@ public class Run {
                 if (i < list.size() - 1) System.out.print(",");
             }
             System.out.print("]");
+        } else if (result instanceof String) {
+            System.out.print("\"" + result + "\"");
         } else {
             System.out.print(result);
         }

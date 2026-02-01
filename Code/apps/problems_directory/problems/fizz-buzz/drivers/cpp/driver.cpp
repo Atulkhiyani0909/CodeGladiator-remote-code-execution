@@ -8,10 +8,8 @@
 using namespace std;
 
 // USER CODE WILL BE INJECTED HERE
-
 vector<string> fizzBuzz(int);
 
-// Helper: Print Vector as [1,2,3] (No spaces)
 template <typename T>
 void printResult(const vector<T>& v) {
     cout << "[";
@@ -24,7 +22,13 @@ void printResult(const vector<T>& v) {
 
 template <typename T>
 void printResult(const T& val) {
-    cout << val;
+    if constexpr (is_same_v<T, bool>) {
+        cout << (val ? "true" : "false");
+    } else if constexpr (is_same_v<T, string>) {
+        cout << "\"" << val << "\"";
+    } else {
+        cout << val;
+    }
 }
 
 int main() {
@@ -34,7 +38,6 @@ int main() {
     buffer << cin.rdbuf(); 
     string content = buffer.str();
 
-    // Use file reader if cin is empty (fallback)
     if (content.empty()) {
         ifstream t("/app/input.txt");
         if(t.is_open()) {
@@ -49,7 +52,6 @@ int main() {
         size_t pos = content.find(DELIMITER, prev);
         string testCase = (pos != string::npos) ? content.substr(prev, pos - prev) : content.substr(prev);
         
-        // Cleanup whitespace
         testCase.erase(0, testCase.find_first_not_of(" \n\r\t"));
         testCase.erase(testCase.find_last_not_of(" \n\r\t") + 1);
 
@@ -59,8 +61,7 @@ int main() {
             
             auto result = fizzBuzz(arg0);
             
-            // Sort result for set-based problems
-            // sort(result.begin(), result.end());
+          
 
             printResult(result);
             cout << endl << DELIMITER << endl;

@@ -8,10 +8,8 @@
 using namespace std;
 
 // USER CODE WILL BE INJECTED HERE
-
 bool containsDuplicate(vector<int>);
 
-// Helper: Print Vector as [1,2,3] (No spaces)
 template <typename T>
 void printResult(const vector<T>& v) {
     cout << "[";
@@ -24,7 +22,13 @@ void printResult(const vector<T>& v) {
 
 template <typename T>
 void printResult(const T& val) {
-    cout << val;
+    if constexpr (is_same_v<T, bool>) {
+        cout << (val ? "true" : "false");
+    } else if constexpr (is_same_v<T, string>) {
+        cout << "\"" << val << "\"";
+    } else {
+        cout << val;
+    }
 }
 
 int main() {
@@ -34,7 +38,6 @@ int main() {
     buffer << cin.rdbuf(); 
     string content = buffer.str();
 
-    // Use file reader if cin is empty (fallback)
     if (content.empty()) {
         ifstream t("/app/input.txt");
         if(t.is_open()) {
@@ -49,7 +52,6 @@ int main() {
         size_t pos = content.find(DELIMITER, prev);
         string testCase = (pos != string::npos) ? content.substr(prev, pos - prev) : content.substr(prev);
         
-        // Cleanup whitespace
         testCase.erase(0, testCase.find_first_not_of(" \n\r\t"));
         testCase.erase(testCase.find_last_not_of(" \n\r\t") + 1);
 
@@ -59,21 +61,22 @@ int main() {
         vector<int> arg0;
         string line0;
         getline(ss, line0);
-        if (line0.size() >= 2 && line0.front() == '[' && line0.back() == ']') {
-            string inner = line0.substr(1, line0.size() - 2);
+        // Handle [1, 2, 3] format or 1 2 3 format
+        size_t start = line0.find('[');
+        size_t end = line0.find(']');
+        if (start != string::npos && end != string::npos) {
+            string inner = line0.substr(start + 1, end - start - 1);
+            for(size_t k=0; k<inner.length(); k++) if(inner[k]==',') inner[k]=' ';
             stringstream ss_line(inner);
-            string segment;
-            while(getline(ss_line, segment, ',')) {
-                if(!segment.empty()) {
-                    try { arg0.push_back(stoi(segment)); } catch(...) {}
-                }
-            }
+            int temp; while(ss_line >> temp) arg0.push_back(temp);
+        } else {
+            stringstream ss_line(line0);
+            int temp; while(ss_line >> temp) arg0.push_back(temp);
         }
             
             auto result = containsDuplicate(arg0);
             
-            // Sort result for set-based problems
-            // sort(result.begin(), result.end());
+          
 
             printResult(result);
             cout << endl << DELIMITER << endl;

@@ -1,16 +1,13 @@
 {
-  "slug": "valid-anagram",
-  "name": "Valid Anagram",
-  "functionName": "isAnagram",
-  "inputs": [
-    { "name": "s", "type": "string" },
-    { "name": "t", "type": "string" }
-  ],
-  "outputType": "bool",
-  "testCases": [
-    { "input": { "s": "anagram", "t": "nagaram" }, "output": "true" },
-    { "input": { "s": "rat", "t": "car" }, "output": "false" },
-    { "input": { "s": "a", "t": "a" }, "output": "true" },
-    { "input": { "s": "ab", "t": "a" }, "output": "false" }
-  ]
-}
+    "slug": "reverse-string",
+    "name": "Reverse String",
+    "functionName": "reverseString",
+    "inputs": [
+      { "name": "s", "type": "string" }
+    ],
+    "outputType": "string",
+    "testCases": [
+      { "input": "hello", "output": "olleh" },
+      { "input": "Hannah", "output": "hannaH" }
+    ]
+  }

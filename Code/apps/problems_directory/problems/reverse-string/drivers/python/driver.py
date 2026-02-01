@@ -13,17 +13,14 @@ def main():
         
         for test_case in test_cases:
             if not test_case.strip(): continue
-            lines = test_case.strip().split('\n')
+            lines = [line.strip() for line in test_case.strip().split('\n') if line.strip()]
             
-            arg0 = lines[0].strip()
+            arg0 = lines[0].strip().strip('"')
 
             result = sol.reverseString(arg0)
             
-            # Sort lists to ensure [4,9] matches [9,4]
-            if isinstance(result, list):
-                result.sort()
+        
             
-            # Use json.dumps to print [1,2] without spaces
             print(json.dumps(result, separators=(',', ':')))
             print(DELIMITER)
             

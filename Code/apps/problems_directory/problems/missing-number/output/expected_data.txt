@@ -1,4 +1,6 @@
-2$$$DELIMITER$$$
-2$$$DELIMITER$$$
-8$$$DELIMITER$$$
-1$$$DELIMITER$$$
+2
+$$$DELIMITER$$$
+2
+$$$DELIMITER$$$
+8
+$$$DELIMITER$$$
