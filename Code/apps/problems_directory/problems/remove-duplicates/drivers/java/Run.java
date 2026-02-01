@@ -1,6 +1,6 @@
 import java.io.*;
-import java.nio.file.*;
 import java.util.*;
+import java.util.stream.*;
 
 public class Run {
 
@@ -10,43 +10,69 @@ public class Run {
         final String DELIMITER = "$$$DELIMITER$$$";
         final String INPUT_FILE = "/app/input.txt";
 
-        String content;
+        String content = "";
         try {
             content = Files.readString(Paths.get(INPUT_FILE));
-        } catch (IOException e) {
-            System.err.println("Input file not found");
-            return;
-        }
+        } catch (IOException e) { return; }
 
-        int prev = 0;
-        int pos;
+        String[] testCases = content.split(java.util.regex.Pattern.quote(DELIMITER));
 
-        while (true) {
-            pos = content.indexOf(DELIMITER, prev);
-            String testCase = (pos != -1)
-                ? content.substring(prev, pos)
-                : content.substring(prev);
+        for (String testCase : testCases) {
+            if (testCase.trim().isEmpty()) continue;
 
-            if (!testCase.trim().isEmpty()) {
-                Scanner scanner = new Scanner(testCase.trim());
+            Scanner scanner = new Scanner(testCase.trim());
+            try {
+                
+                String raw0 = scanner.hasNextLine() ? scanner.nextLine().trim() : "";
+                List<Integer> arg0 = parseIntegerList(raw0);
 
-                // Read integers from the scanner into a list
-                List<Integer> inputList = new ArrayList<>();
-                while (scanner.hasNextInt()) {
-                    inputList.add(scanner.nextInt());
+                var result = removeDuplicates(arg0);
+                
+                // Sort Lists to ensure [4,9] matches [9,4]
+                if (result instanceof List) {
+                     Collections.sort((List<Integer>) result);
                 }
 
-                // Call your method with the real input list
-                List<Integer> result = removeDuplicates(inputList);
-
-                System.out.println(result);
+                printResult(result);
+                System.out.println();
                 System.out.println(DELIMITER);
 
+            } catch (Exception e) {
+            } finally {
                 scanner.close();
             }
+        }
+    }
 
-            if (pos == -1) break;
-            prev = pos + DELIMITER.length();
+    private static List<Integer> parseIntegerList(String raw) {
+        if (raw == null || raw.isEmpty()) return new ArrayList<>();
+        if (raw.startsWith("[")) raw = raw.substring(1);
+        if (raw.endsWith("]")) raw = raw.substring(0, raw.length() - 1);
+        
+        raw = raw.trim();
+        if (raw.isEmpty()) return new ArrayList<>();
+        
+        String[] parts = raw.split("[,\\s]+");
+        List<Integer> list = new ArrayList<>();
+        for (String part : parts) {
+            if (!part.isEmpty()) {
+                try { list.add(Integer.parseInt(part.trim())); } catch(Exception e) {}
+            }
+        }
+        return list;
+    }
+
+    private static void printResult(Object result) {
+        if (result instanceof List) {
+            List<?> list = (List<?>) result;
+            System.out.print("[");
+            for (int i = 0; i < list.size(); i++) {
+                System.out.print(list.get(i));
+                if (i < list.size() - 1) System.out.print(",");
+            }
+            System.out.print("]");
+        } else {
+            System.out.print(result);
         }
     }
 }
