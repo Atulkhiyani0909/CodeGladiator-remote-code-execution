@@ -6,6 +6,23 @@ public class Run {
 
     //_USER_CODE_HERE_
 
+    // Parse a line like [1, 2, 3] or []
+    private static List<Integer> parseList(String line) {
+        line = line.trim();
+        if (line.startsWith("[") && line.endsWith("]")) {
+            line = line.substring(1, line.length() - 1);
+        }
+
+        List<Integer> list = new ArrayList<>();
+        if (line.isEmpty()) return list;
+
+        // Split by comma and optional spaces
+        for (String s : line.split(",\\s*")) {
+            list.add(Integer.parseInt(s));
+        }
+        return list;
+    }
+
     public static void main(String[] args) {
         final String DELIMITER = "$$$DELIMITER$$$";
         final String INPUT_FILE = "/app/input.txt";
@@ -30,19 +47,12 @@ public class Run {
             if (!testCase.trim().isEmpty()) {
                 Scanner scanner = new Scanner(testCase.trim());
 
-                // ===== FIXED ARGUMENT GENERATION =====
-                int n = scanner.nextInt();
-                List<Integer> arg0 = new ArrayList<>();
-                for (int i = 0; i < n; i++) {
-                    arg0.add(scanner.nextInt());
-                }
+                // Read two lines for the two lists
+                String line1 = scanner.hasNextLine() ? scanner.nextLine() : "[]";
+                String line2 = scanner.hasNextLine() ? scanner.nextLine() : "[]";
 
-                int m = scanner.nextInt();
-                List<Integer> arg1 = new ArrayList<>();
-                for (int i = 0; i < m; i++) {
-                    arg1.add(scanner.nextInt());
-                }
-                // ====================================
+                List<Integer> arg0 = parseList(line1);
+                List<Integer> arg1 = parseList(line2);
 
                 var result = intersection(arg0, arg1);
                 System.out.println(result);
