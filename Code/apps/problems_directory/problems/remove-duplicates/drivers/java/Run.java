@@ -30,10 +30,15 @@ public class Run {
             if (!testCase.trim().isEmpty()) {
                 Scanner scanner = new Scanner(testCase.trim());
 
-                // Type List<int> not fully supported in generator
+                // Read integers from the scanner into a list
+                List<Integer> inputList = new ArrayList<>();
+                while (scanner.hasNextInt()) {
+                    inputList.add(scanner.nextInt());
+                }
 
-                // Assuming static method
-                var result = removeDuplicates(arg0);
+                // Call your method with the real input list
+                List<Integer> result = removeDuplicates(inputList);
+
                 System.out.println(result);
                 System.out.println(DELIMITER);
 
