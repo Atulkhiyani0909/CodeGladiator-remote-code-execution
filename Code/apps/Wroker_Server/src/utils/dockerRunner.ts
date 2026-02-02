@@ -9,7 +9,7 @@ import { LANGUAGE_CONFIG } from '../utils/languageConfig.js';
 const KEEP_FILES = false; 
 
 const TEMP_DIR = path.resolve(process.cwd(), 'temp');
-const TIMEOUT_MS = 15000;
+const TIMEOUT_MS = 30000;
 
 const GITHUB_RAW_BASE =
     'https://raw.githubusercontent.com/Atulkhiyani0909/CodeGladiator/main/Code/apps/problems_directory/problems';
@@ -54,7 +54,7 @@ async function fetchDriverCode(
     console.log(`🌐 Fetching driver: ${url}`);
 
     try {
-        const res = await axios.get(url, { timeout: 15000 });
+        const res = await axios.get(url, { timeout: 25000 });
         if (typeof res.data !== 'string') {
             throw new Error('Invalid driver content received');
         }

@@ -80,7 +80,7 @@ class CodeExecution {
                     console.log("Timeout waiting for execution result");
                     statusListener.unsubscribe(channelName);
                     resolve(null);
-                }, 10000);
+                }, 30000);
 
                 statusListener.subscribe(channelName, (message) => {
                     clearTimeout(timeout);
