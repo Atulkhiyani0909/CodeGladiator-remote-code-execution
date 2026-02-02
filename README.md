@@ -14,6 +14,10 @@
 
 <img width="1904" height="862" alt="image" src="https://github.com/user-attachments/assets/f5e90ca3-72fc-409f-b2af-fe955e952f82" />
 
+# Backend Architecture
+
+<img width="1450" height="758" alt="image" src="https://github.com/user-attachments/assets/2f1ac368-63a7-4b8a-9123-38d1c77ca1be" />
+
 
 
 
