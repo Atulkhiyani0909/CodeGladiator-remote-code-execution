@@ -1,6 +1,8 @@
 # ⚔️ Code Gladiator
 
 > **Where Code Meets Glory.** A real-time competitive programming arena built for developers to battle, rank up, and prove their algorithmic prowess.
+>
+> # Demo Video [https://drive.google.com/file/d/13q5KTEExTzQiarGEwo-jRKHh28XWLcAD/view?usp=sharing]
 
 <img width="1904" height="834" alt="image" src="https://github.com/user-attachments/assets/0b048d7b-6222-499b-92be-04ee4a8f9928" />
 <img width="1889" height="862" alt="image" src="https://github.com/user-attachments/assets/4d017196-15a9-4d06-be5e-ba90e455a3a8" />
